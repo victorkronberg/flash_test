@@ -51,6 +51,9 @@
 	
     /* Flash Status Register (FSTAT)*/
     #define FTFx_SSD_FSTAT_OFFSET               0x00000000U
+	#define FFTx_CCIF							0x0080U
+	#define FTFx_ACCERR							0x0020U
+	#define FTFx_PVIOL							0x0010U
     /* Flash configuration register (FCNFG)*/
     #define FTFx_SSD_FCNFG_OFFSET               0x00000001U
     /* Flash security register (FSEC) */
@@ -70,6 +73,7 @@
     #define FTFx_SSD_FCCOB9_OFFSET              0x0000000EU
     #define FTFx_SSD_FCCOBA_OFFSET              0x0000000DU
     #define FTFx_SSD_FCCOBB_OFFSET              0x0000000CU
+	#define CMD_PROGRAM_LONGWORD				0x0006U
     /* P-Flash protection registers (FPROT0-3) */
     #define FTFx_SSD_FPROT0_OFFSET              0x00000013U
     #define FTFx_SSD_FPROT1_OFFSET              0x00000012U
@@ -105,15 +109,24 @@
 
 typedef enum {
     /* add error codes here as needed */
-	F_NULLPTR = -3, /* Null address pointer passed */
-    F_ACCERR = -2, /* attempt to read while program in progress */
-    F_FPVIOL = -1, /* attempt to program a protected flash area */
-    F_NO_ERROR = 0 /* success */
+	F_OUTOFRANGE = -4;	/*Attempt to write outside of memory range */
+	F_NULLPTR = -3, 	/* Null address pointer passed */
+    F_ACCERR = -2, 		/* attempt to read while program in progress */
+    F_FPVIOL = -1, 		/* attempt to program a protected flash area */
+    F_NO_ERROR = 0 		/* success */
 } ferr_t;
 
 /*-------------- Read/Write/Set/Clear Operation Macros -----------------*/
 /*	Adapted from NXP's KSDK_1.3.0 C90TFS driver examples 
 */
+#define REG_BIT_SET(address, mask)      (*(uint8_t*)(address) |= (mask))
+#define REG_BIT_CLEAR(address, mask)    (*(uint8_t*)(address) &= ~(mask))
+#define REG_BIT_GET(address, mask)      (*(uint8_t *)(address) & (uint8_t)(mask))
+#define REG_WRITE(address, value)       (*(uint8_t*)(address) = (value))
+#define REG_READ(address)               ((*(uint8_t*)(address)))
+
+#define GET_BIT(value,mask)				((uint8_t)(value) & (uint8_t)(mask))
+
 #define GET_BIT_0_7(value)              ((uint8_t)((value) & 0xFFU))
 #define GET_BIT_8_15(value)             ((uint8_t)(((value)>>8) & 0xFFU))
 #define GET_BIT_16_23(value)            ((uint8_t)(((value)>>16) & 0xFFU))
