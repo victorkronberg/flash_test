@@ -22,10 +22,18 @@
 
 void main (void)
 {
-	
+	FLASH_SSD_CONFIG flashSSDConfig = 
+	{
+	FTFx_REG_BASE,          /*! FTFx control register base */
+    P_FLASH_BASE,           /*! Base address of PFlash block */
+    P_FLASH_SIZE,           /*! Size of PFlash block */
+	}
 }
 
 ferr_t fprogram( uint32_t *address, uint32_t data )
 {
-	
+	if(!address)
+	{
+		return F_NULLPTR;
+	}
 }

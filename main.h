@@ -25,13 +25,30 @@
 
 #include <stdint.h>
 
-/*  Device address locations taken from KSDK_1.3.0 device driver examples
+/*  Device address locations taken from KSDK_1.3.0 C90TFS device driver examples and features header
 *	Provided by NXP
 */
 	/* Longword size */
 	#define FTFx_LONGWORD_SIZE					0x0004U     /* 4 bytes */
 	/* Flash memory module register base address */
-	#define ftfxRegBase							0x40020000U
+	#define FTFx_REG_BASE             0x40020000
+	#define P_FLASH_BASE              0x00000000
+	/* @brief P-Flash start address. */
+    #define FSL_FEATURE_FLASH_PFLASH_START_ADDRESS (0x00000000)
+    /* @brief P-Flash block count. */
+    #define FSL_FEATURE_FLASH_PFLASH_BLOCK_COUNT (1)
+    /* @brief P-Flash block size. */
+    #define FSL_FEATURE_FLASH_PFLASH_BLOCK_SIZE (131072)
+    /* @brief P-Flash sector size. */
+    #define FSL_FEATURE_FLASH_PFLASH_BLOCK_SECTOR_SIZE (1024)
+    /* @brief P-Flash write unit size. */
+    #define FSL_FEATURE_FLASH_PFLASH_BLOCK_WRITE_UNIT_SIZE (4)
+	
+	// Program Flash block information
+	#define P_FLASH_SIZE            (FSL_FEATURE_FLASH_PFLASH_BLOCK_SIZE * FSL_FEATURE_FLASH_PFLASH_BLOCK_COUNT)
+	#define P_BLOCK_NUM             FSL_FEATURE_FLASH_PFLASH_BLOCK_COUNT
+	#define P_SECTOR_SIZE           FSL_FEATURE_FLASH_PFLASH_BLOCK_SECTOR_SIZE
+	
     /* Flash Status Register (FSTAT)*/
     #define FTFx_SSD_FSTAT_OFFSET               0x00000000U
     /* Flash configuration register (FCNFG)*/
@@ -88,6 +105,7 @@
 
 typedef enum {
     /* add error codes here as needed */
+	F_NULLPTR = -3, /* Null address pointer passed */
     F_ACCERR = -2, /* attempt to read while program in progress */
     F_FPVIOL = -1, /* attempt to program a protected flash area */
     F_NO_ERROR = 0 /* success */
@@ -103,7 +121,7 @@ typedef enum {
 
 /*---------------- Flash SSD Configuration Structure -------------------*/
 /*! @brief Flash SSD Configuration Structure
-*	Taken from NXP's KSDK_1.3.0 Device driver examples
+*	Taken from NXP's KSDK_1.3.0 C90TFS Device driver examples
 *
 * The structure includes the static parameters for  C90TFS/FTFx  which are
 * device-dependent. The user should correctly initialize the fields including
@@ -119,17 +137,7 @@ typedef struct _ssd_config
     uint32_t      ftfxRegBase;        /*!< The  register  base address of  C90TFS/FTFx */
     uint32_t      PFlashBase;         /*!< The base address of P-Flash memory */
     uint32_t      PFlashSize;         /*!< The size in byte of P-Flash memory */
-    uint32_t      DFlashBase;         /*!< For FlexNVM device, this is the base address of D-Flash memory (FlexNVM memory); For non-FlexNVM device, this field is unused */
-    uint32_t      DFlashSize;         /*!< For FlexNVM device, this is the size in byte of area
-                                          which is used as  D-Flash  from FlexNVM
-                                          memory;  For non-FlexNVM device, this field is unused */
-    uint32_t      EERAMBase;          /*!< The base address of  FlexRAM  (for FlexNVM
-                                          device) or acceleration RAM  memory  (for non-FlexNVM device) */
-    uint32_t      EEESize;            /*!< For FlexNVM device, this is the size in byte of
-                                          EEPROM area  which was partitioned from
-                                          FlexRAM; For non-FlexNVM device, this field is unused */
-    bool          DebugEnable;        /*!< Background debug mode enable */
-    PCALLBACK     CallBack;           /*!< Call back function to service the time critical events */
+	
 } FLASH_SSD_CONFIG, *PFLASH_SSD_CONFIG;
 
 
