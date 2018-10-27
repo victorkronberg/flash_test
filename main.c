@@ -20,6 +20,8 @@
 *
 */
 
+#include <main.h>
+
 void main (void)
 {
 
@@ -37,12 +39,12 @@ ferr_t fprogram( uint32_t *address, uint32_t data )
 	FTFx_REG_BASE,          /*! FTFx control register base address */
     P_FLASH_BASE,           /*! Base address of PFlash block */
     P_FLASH_SIZE,           /*! Size of PFlash block */
-	}
+	};
 	uint32_t temp;
 	
 	//check that write is within flash address space
-	temp = flashSSDConfig->P_FLASH_BASE + flashSSDConfig->P_FLASH_SIZE;
-	if (address > temp)
+	temp = flashSSDConfig.PFlashBase + flashSSDConfig.PFlashSize;
+	if ((uint32_t)(uintptr_t)address > temp)
 	{
 		return F_OUTOFRANGE;
 	}
@@ -50,52 +52,52 @@ ferr_t fprogram( uint32_t *address, uint32_t data )
 	//Wait for previous command to finish
 	//NOTE: need to deal with volatile before porting to HW
 	//NEED TO HANDLE ERROR SITUATION
-	temp = flashSSDConfig->P_FLASH_BASE + FTFx_SSD_FSTAT_OFFSET;
+	temp = flashSSDConfig.ftfxRegBase + FTFx_SSD_FSTAT_OFFSET;
 	while(!REG_BIT_GET(temp,FFTx_CCIF));
 	
-	temp = (flashSSDConfig->P_FLASH_BASE) + FTFx_SSD_FSTAT_OFFSET;
+	temp = (flashSSDConfig.ftfxRegBase) + FTFx_SSD_FSTAT_OFFSET;
 	uint8_t Fstatus = REG_READ(temp);
 	
 	//Check ACCERR and FPVIOL - if violation, clear bit and return error generated from previous command
 	if(GET_BIT(Fstatus,FTFx_ACCERR))
 	{
-		temp = flashSSDConfig->P_FLASH_BASE + FTFx_SSD_FSTAT_OFFSET;
+		temp = flashSSDConfig.ftfxRegBase + FTFx_SSD_FSTAT_OFFSET;
 		REG_BIT_SET(temp,FTFx_ACCERR);
 		return F_ACCERR;
 	}
 	
 	if(GET_BIT(Fstatus,FTFx_PVIOL))
 	{
-		temp = flashSSDConfig->P_FLASH_BASE + FTFx_SSD_FSTAT_OFFSET;
+		temp = flashSSDConfig.ftfxRegBase + FTFx_SSD_FSTAT_OFFSET;
 		REG_BIT_SET(temp,FTFx_PVIOL);
 		return F_FPVIOL;
 	}
 	
 	//Write program command in FCCOB CMD register
-	temp = flashSSDConfig->P_FLASH_BASE + FTFx_SSD_FCCOB0_OFFSET;
+	temp = flashSSDConfig.ftfxRegBase + FTFx_SSD_FCCOB0_OFFSET;
 	REG_WRITE(temp,CMD_PROGRAM_LONGWORD);
 	
 	//Write address to FCCOB address registers
-	temp = flashSSDConfig->P_FLASH_BASE + FTFx_SSD_FCCOB3_OFFSET;
+	temp = flashSSDConfig.ftfxRegBase + FTFx_SSD_FCCOB3_OFFSET;
 	REG_WRITE(temp,GET_BIT_0_7(address));
-	temp = flashSSDConfig->P_FLASH_BASE + FTFx_SSD_FCCOB2_OFFSET;
+	temp = flashSSDConfig.ftfxRegBase + FTFx_SSD_FCCOB2_OFFSET;
 	REG_WRITE(temp,GET_BIT_8_15(address));
-	temp = flashSSDConfig->P_FLASH_BASE + FTFx_SSD_FCCOB1_OFFSET;
+	temp = flashSSDConfig.ftfxRegBase + FTFx_SSD_FCCOB1_OFFSET;
 	REG_WRITE(temp,GET_BIT_16_23(address));
 	
 	//Write 32 bit data to FCCOB's first 4 8-bit data registers
-	temp = flashSSDConfig->P_FLASH_BASE + FTFx_SSD_FCCOB4_OFFSET;
+	temp = flashSSDConfig.ftfxRegBase + FTFx_SSD_FCCOB4_OFFSET;
 	REG_WRITE(temp,GET_BIT_0_7(data));
-	temp = flashSSDConfig->P_FLASH_BASE + FTFx_SSD_FCCOB5_OFFSET;
+	temp = flashSSDConfig.ftfxRegBase + FTFx_SSD_FCCOB5_OFFSET;
 	REG_WRITE(temp,GET_BIT_8_15(data));
-	temp = flashSSDConfig->P_FLASH_BASE + FTFx_SSD_FCCOB6_OFFSET;
+	temp = flashSSDConfig.ftfxRegBase + FTFx_SSD_FCCOB6_OFFSET;
 	REG_WRITE(temp,GET_BIT_16_23(data));
-	temp = flashSSDConfig->P_FLASH_BASE + FTFx_SSD_FCCOB7_OFFSET;
+	temp = flashSSDConfig.ftfxRegBase + FTFx_SSD_FCCOB7_OFFSET;
 	REG_WRITE(temp,GET_BIT_24_31(data));
 	
 	//Clear CCIF (write 0x80 to FSTAT)
-	temp = flashSSDConfig->P_FLASH_BASE + FTFx_SSD_FSTAT_OFFSET;
-	REG_BIT_SET(temp, FFTx_CCIF)
+	temp = flashSSDConfig.ftfxRegBase + FTFx_SSD_FSTAT_OFFSET;
+	REG_BIT_SET(temp, FFTx_CCIF);
 	
 	return F_NO_ERROR;
 	
