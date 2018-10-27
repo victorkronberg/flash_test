@@ -28,6 +28,10 @@
 /*  Device address locations taken from KSDK_1.3.0 device driver examples
 *	Provided by NXP
 */
+	/* Longword size */
+	#define FTFx_LONGWORD_SIZE					0x0004U     /* 4 bytes */
+	/* Flash memory module register base address */
+	#define ftfxRegBase							0x40020000U
     /* Flash Status Register (FSTAT)*/
     #define FTFx_SSD_FSTAT_OFFSET               0x00000000U
     /* Flash configuration register (FCNFG)*/
@@ -89,8 +93,44 @@ typedef enum {
     F_NO_ERROR = 0 /* success */
 } ferr_t;
 
+/*-------------- Read/Write/Set/Clear Operation Macros -----------------*/
+/*	Adapted from NXP's KSDK_1.3.0 C90TFS driver examples 
+*/
+#define GET_BIT_0_7(value)              ((uint8_t)((value) & 0xFFU))
+#define GET_BIT_8_15(value)             ((uint8_t)(((value)>>8) & 0xFFU))
+#define GET_BIT_16_23(value)            ((uint8_t)(((value)>>16) & 0xFFU))
+#define GET_BIT_24_31(value)            ((uint8_t)((value)>>24))
 
-
+/*---------------- Flash SSD Configuration Structure -------------------*/
+/*! @brief Flash SSD Configuration Structure
+*	Taken from NXP's KSDK_1.3.0 Device driver examples
+*
+* The structure includes the static parameters for  C90TFS/FTFx  which are
+* device-dependent. The user should correctly initialize the fields including
+* ftfxRegBase, PFlashBlockBase, PFlashBlockSize, DFlashBlockBase, EERAMBlockBase,
+* DebugEnable and CallBack before passing the structure to SSD functions.
+* The rest of parameters such as DFlashBlockSize, and EEEBlockSize will be
+* initialized in FlashInit() automatically. The pointer to CallBack has to be
+* initialized either for null callback or a valid call back function.
+*
+*/
+typedef struct _ssd_config
+{
+    uint32_t      ftfxRegBase;        /*!< The  register  base address of  C90TFS/FTFx */
+    uint32_t      PFlashBase;         /*!< The base address of P-Flash memory */
+    uint32_t      PFlashSize;         /*!< The size in byte of P-Flash memory */
+    uint32_t      DFlashBase;         /*!< For FlexNVM device, this is the base address of D-Flash memory (FlexNVM memory); For non-FlexNVM device, this field is unused */
+    uint32_t      DFlashSize;         /*!< For FlexNVM device, this is the size in byte of area
+                                          which is used as  D-Flash  from FlexNVM
+                                          memory;  For non-FlexNVM device, this field is unused */
+    uint32_t      EERAMBase;          /*!< The base address of  FlexRAM  (for FlexNVM
+                                          device) or acceleration RAM  memory  (for non-FlexNVM device) */
+    uint32_t      EEESize;            /*!< For FlexNVM device, this is the size in byte of
+                                          EEPROM area  which was partitioned from
+                                          FlexRAM; For non-FlexNVM device, this field is unused */
+    bool          DebugEnable;        /*!< Background debug mode enable */
+    PCALLBACK     CallBack;           /*!< Call back function to service the time critical events */
+} FLASH_SSD_CONFIG, *PFLASH_SSD_CONFIG;
 
 
 ///////////////////////////////////////////////////////////////////

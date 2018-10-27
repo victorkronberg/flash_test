@@ -20,3 +20,12 @@
 *
 */
 
+void main (void)
+{
+	
+}
+
+ferr_t fprogram( uint32_t *address, uint32_t data )
+{
+	
+}
