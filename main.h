@@ -25,6 +25,14 @@
 
 #include <stdint.h>
 
+
+typedef volatile signed char vint8_t;
+typedef volatile unsigned char vuint8_t;
+typedef volatile signed short vint16_t;
+typedef volatile unsigned short vuint16_t;
+typedef volatile signed long vint32_t;
+typedef volatile unsigned long vuint32_t;
+
 /*  Device address locations taken from KSDK_1.3.0 C90TFS device driver examples and features header
 *	Provided by NXP
 */
@@ -117,11 +125,11 @@ typedef enum {
 /*-------------- Read/Write/Set/Clear Operation Macros -----------------*/
 /*	Adapted from NXP's KSDK_1.3.0 C90TFS driver examples 
 */
-#define REG_BIT_SET(address, mask)      (*(uint8_t *)(address) |= (mask))
-#define REG_BIT_CLEAR(address, mask)    (*(uint8_t *)(address) &= ~(mask))
-#define REG_BIT_GET(address, mask)      (*(uint8_t *)(address) & (uint8_t)(mask))
-#define REG_WRITE(address, value)       (*(uint8_t *)(address) = (value))
-#define REG_READ(address)               (*(uint8_t *)(address))
+#define REG_BIT_SET(address, mask)      (*(vuint8_t*)(address) |= (mask))
+#define REG_BIT_CLEAR(address, mask)    (*(vuint8_t*)(address) &= ~(mask))
+#define REG_BIT_GET(address, mask)      (*(vuint8_t *)(address) & (uint8_t)(mask))
+#define REG_WRITE(address, value)       (*(vuint8_t*)(address) = (value))
+#define REG_READ(address)               ((uint8_t)(*(vuint8_t*)(address)))
 
 #define GET_BIT(value,mask)				((uint8_t)(value) & (uint8_t)(mask))
 
