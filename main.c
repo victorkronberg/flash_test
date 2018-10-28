@@ -79,11 +79,11 @@ ferr_t fprogram( uint32_t *address, uint32_t data )
 	
 	//Write address to FCCOB address registers
 	temp = flashSSDConfig.ftfxRegBase + FTFx_SSD_FCCOB3_OFFSET;
-	REG_WRITE(temp,GET_BIT_0_7(address));
+	REG_WRITE(temp,GET_BIT_0_7((uint32_t)((uintptr_t)address)));
 	temp = flashSSDConfig.ftfxRegBase + FTFx_SSD_FCCOB2_OFFSET;
-	REG_WRITE(temp,GET_BIT_8_15(address));
+	REG_WRITE(temp,GET_BIT_8_15((uint32_t)((uintptr_t)address)));
 	temp = flashSSDConfig.ftfxRegBase + FTFx_SSD_FCCOB1_OFFSET;
-	REG_WRITE(temp,GET_BIT_16_23(address));
+	REG_WRITE(temp,GET_BIT_16_23((uint32_t)((uintptr_t)address)));
 	
 	//Write 32 bit data to FCCOB's first 4 8-bit data registers
 	temp = flashSSDConfig.ftfxRegBase + FTFx_SSD_FCCOB4_OFFSET;

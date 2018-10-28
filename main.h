@@ -117,11 +117,11 @@ typedef enum {
 /*-------------- Read/Write/Set/Clear Operation Macros -----------------*/
 /*	Adapted from NXP's KSDK_1.3.0 C90TFS driver examples 
 */
-#define REG_BIT_SET(address, mask)      (*(uint8_t*)(address) |= (mask))
-#define REG_BIT_CLEAR(address, mask)    (*(uint8_t*)(address) &= ~(mask))
+#define REG_BIT_SET(address, mask)      (*(uint8_t *)(address) |= (mask))
+#define REG_BIT_CLEAR(address, mask)    (*(uint8_t *)(address) &= ~(mask))
 #define REG_BIT_GET(address, mask)      (*(uint8_t *)(address) & (uint8_t)(mask))
-#define REG_WRITE(address, value)       (*(uint8_t*)(address) = (value))
-#define REG_READ(address)               ((*(uint8_t*)(address)))
+#define REG_WRITE(address, value)       (*(uint8_t *)(address) = (value))
+#define REG_READ(address)               (*(uint8_t *)(address))
 
 #define GET_BIT(value,mask)				((uint8_t)(value) & (uint8_t)(mask))
 
